@@ -55,4 +55,13 @@ RSpec.describe Geminabox::Server do
       expect(last_response.status).to eq 200
     end
   end
+
+  describe "POST /gems" do
+    it "adds the gem to the repository" do
+      input_file = StringIO.new("hello")
+      expect(gem_store).to receive(:add).with(input_file)
+      post "/gems", {}, "content-type" => "application/octet-stream", "rack.input" => input_file
+      expect(last_response.status).to eq 201
+    end
+  end
 end

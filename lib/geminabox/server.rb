@@ -30,7 +30,11 @@ class Geminabox::Server < Sinatra::Base
   end
 
   post '/gems' do
-    gem_store.add request.body
+    if params[:file]
+      gem_store.add params[:file][:tempfile]
+    else
+      gem_store.add request.body
+    end
     201
   end
 end

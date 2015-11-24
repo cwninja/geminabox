@@ -1,19 +1,18 @@
 require "pathname"
 require "rubygems/package"
 require "geminabox/filename_generator"
+require "geminabox/gem_file_store"
 require "sequel"
 
 # A GemStore should return a path on the local file system where the referenced
 # Gem can be found.
 class Geminabox::GemStore
-  include Geminabox::FilenameGenerator
-
-  def get(gem_full_name)
-    get_path(gem_full_name).open
+  def get(*args)
+    @file_store.get(*args)
   end
 
-  def has_gem?(gem_full_name, version = nil, platform = "ruby")
-    path(gem_full_name, version, platform).exist?
+  def has_gem?(*args)
+    @file_store.has_gem?(*args)
   end
 
   def add(io)
@@ -23,7 +22,8 @@ class Geminabox::GemStore
       tempfile.close
       gem = Gem::Package.new(tempfile.path)
       file_name = gem.spec.file_name
-      IO.copy_stream(tempfile.path, @root_path.join(file_name))
+      @file_store.add(tempfile.path, file_name)
+
       indexed_gem = Geminabox::IndexedGem.new(
         gem.spec.name,
         gem.spec.version,
@@ -63,31 +63,19 @@ class Geminabox::GemStore
   end
 
   def delete(name, version, platform = 'ruby')
-    gem_path = path(name, version, platform)
     indexed_gem = Geminabox::IndexedGem.new(name, version, platform)
     @db[:gems].where(
       name: indexed_gem.name,
       version: indexed_gem.version,
       platform: indexed_gem.platform
     ).delete
-    gem_path.delete if gem_path.exist?
+    @file_store.delete(name, version, platform)
   end
 
 protected
-  def path(*gem_full_name)
-    filename = gem_filename(*gem_full_name)
-    @root_path.join(filename)
-  end
-
-  def get_path(gem_full_name)
-    pathname = path(gem_full_name)
-    pathname.exist? or
-      raise Geminabox::GemNotFound.new("Gem #{gem_full_name} not found")
-    pathname
-  end
-
   def initialize(path)
     @root_path = Pathname.new(path)
+    @file_store = Geminabox::GemFileStore.new(@root_path)
     database_path = @root_path.join("database.sqlite3")
     @db = Sequel.connect("sqlite://#{database_path}")
     if not database_path.exist?

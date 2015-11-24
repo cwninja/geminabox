@@ -21,10 +21,9 @@ class Geminabox::GemStore
     Tempfile.create('gem', Dir.tmpdir, encoding: 'ascii-8bit') do |tempfile|
       IO.copy_stream(io, tempfile)
       tempfile.close
-      gem = Gem::Package.new(tempfile.path)
-      file_name = gem.spec.file_name
-      @file_store.add(tempfile.path, file_name)
-      @metadata_store.add(gem.spec)
+      spec = Gem::Package.new(tempfile.path).spec
+      @file_store.add(tempfile.path, spec.file_name)
+      @metadata_store.add(spec)
     end
   rescue Gem::Package::FormatError
     raise Geminabox::BadGemfile, "Could not process uploaded gemfile."

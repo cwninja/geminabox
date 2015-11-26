@@ -1,5 +1,6 @@
 class Geminabox::GemMetadataStore
   def initialize(database_path)
+    database_path = Pathname(database_path)
     @db = Sequel.connect("sqlite://#{database_path}")
     if not database_path.exist?
       @db.create_table :gems do

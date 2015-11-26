@@ -2,7 +2,7 @@ class Geminabox::GemFileStore
   include Geminabox::FilenameGenerator
 
   def initialize(root_path)
-    @root_path = root_path
+    @root_path = Pathname(root_path)
   end
 
   def add(uploaded_file, name)

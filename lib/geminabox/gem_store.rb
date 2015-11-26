@@ -44,11 +44,11 @@ class Geminabox::GemStore
   end
 
 protected
-  def initialize(path)
-    @root_path = Pathname.new(path)
-    @file_store = Geminabox::GemFileStore.new(@root_path)
-    @metadata_store = Geminabox::GemMetadataStore.new(
-      @root_path.join("database.sqlite3")
+  def initialize(path = nil, metadata_store: nil, file_store: nil)
+    root_path = Pathname.new(path) if path
+    @file_store = file_store || Geminabox::GemFileStore.new(root_path)
+    @metadata_store = metadata_store || Geminabox::GemMetadataStore.new(
+      root_path.join("database.sqlite3")
     )
   end
 

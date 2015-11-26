@@ -134,12 +134,27 @@ RSpec.describe Geminabox::GemStore do
     end
   end
 
-  attr_reader :gem_store, :dir
+  describe "get spec" do
+    it "extracts the gemspec from the gemfile" do
+      spec = double(:spec)
+      io = double(:io)
+      expect(file_store).to receive(:get).with("foo").and_return(io)
+      expect(Geminabox::SpecExtractor).to receive(:call).with(io).and_return(spec)
+      expect(gem_store.get_spec("foo")).to be spec
+    end
+  end
+
+  attr_reader :gem_store, :dir, :file_store, :metadata_store
 
   around do |example|
     Dir.mktmpdir do |dir|
       @dir = dir
-      @gem_store = Geminabox::GemStore.new(dir)
+      @file_store = Geminabox::GemFileStore.new(dir)
+      @metadata_store = Geminabox::GemMetadataStore.new(dir + "/database.sqlite3")
+      @gem_store = Geminabox::GemStore.new(
+        metadata_store: @metadata_store,
+        file_store: @file_store,
+      )
       example.run
     end
   end

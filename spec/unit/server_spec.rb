@@ -72,7 +72,7 @@ RSpec.describe Geminabox::Server do
     end
 
     around do |example|
-      Tempfile.create('gemfile') do |f|
+      Tempfile.open('gemfile') do |f|
         f.write "hello"
         f.close
         @file = f

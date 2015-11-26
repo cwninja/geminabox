@@ -23,7 +23,7 @@ class Geminabox::GemStore
 
   def add(io)
     raise ArgumentError, "Expected IO object" unless io.respond_to? :read
-    Tempfile.create('gem', Dir.tmpdir, encoding: 'ascii-8bit') do |tempfile|
+    Tempfile.open('gem', Dir.tmpdir, encoding: 'ascii-8bit') do |tempfile|
       IO.copy_stream(io, tempfile)
       tempfile.close
       spec = Gem::Package.new(tempfile.path).spec

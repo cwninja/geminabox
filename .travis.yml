@@ -1,11 +1,18 @@
 language: ruby
 
 before_install:
- - gem update --system 2.4
+ - gem update --system $gemver
  - gem --version
 
 rvm:
  - "2.0.0"
  - "2.1.0"
  - "2.2.0"
+
+
+env:
+  - gemver: 2.4
+  - gemver: 2.3
+  - gemver: 
+
 script: bundle exec rspec spec

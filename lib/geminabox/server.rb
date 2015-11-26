@@ -29,6 +29,17 @@ class Geminabox::Server < Sinatra::Base
     end
   end
 
+  get '/api/v1/dependencies.json' do
+    if gems = params["gems"]
+      gems = params["gems"].split(",")
+      indexed_gems = gem_store.find_gem_versions(gems)
+      content_type "application/json"
+      JSON.dump(indexed_gems.map(&:to_hash))
+    else
+      ''
+    end
+  end
+
   get "/quick/Marshal.4.8/:name.gemspec.rz" do
     spec = gem_store.get_spec(params[:name])
     io = Zlib::Deflate.deflate(Marshal.dump(spec))

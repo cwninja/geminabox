@@ -25,6 +25,30 @@ RSpec.describe Geminabox::Server do
     end
   end
 
+  describe "GET /api/v1/dependencies.json" do
+    it "returns an empty string when no gems listed" do
+      get "/api/v1/dependencies.json"
+      expect(last_response.status).to eq 200
+      expect(last_response.body).to be_empty
+    end
+
+    it "returns a marshaled string when dependencies are available" do
+      expect(gem_store).to receive(:find_gem_versions)
+        .with(["name"])
+        .and_return([
+          Geminabox::IndexedGem.new("name", "1.1.1", "ruby"),
+          Geminabox::IndexedGem.new("name", "1.1.2", "ruby"),
+        ])
+      get "/api/v1/dependencies.json?gems=name"
+      expect(last_response.status).to eq 200
+      expect(last_response.content_type).to eq 'application/json'
+      expect(JSON.load(last_response.body)).to eq [
+        {"name" => "name", "number" => "1.1.1", "platform" => "ruby", "dependencies" => []},
+        {"name" => "name", "number" => "1.1.2", "platform" => "ruby", "dependencies" => []},
+      ]
+    end
+  end
+
   describe "GET /api/v1/dependencies" do
     it "returns an empty string when no gems listed" do
       get "/api/v1/dependencies"

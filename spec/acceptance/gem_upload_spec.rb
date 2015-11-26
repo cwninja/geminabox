@@ -26,7 +26,7 @@ RSpec.describe "Uploading a gem file to the server" do
   }
 
   let(:server) {
-    TestServer.new{}
+    TestServer.gem_store{}
   }
 
   around do |example|

@@ -2,7 +2,7 @@ require 'bundler'
 
 RSpec.describe 'using bundler with Geminabox server' do
   let(:server) {
-    TestServer.new do |server|
+    TestServer.gem_store do |server|
       server.gem 'test-foo-bar-baz', '1.0', deps: { othertest: '~>1.0.0' }
       server.gem 'othertest', '1.0.1'
       server.gem 'othertest', '0.0.1'

@@ -4,6 +4,11 @@ require 'webrick'
 class TestServer
   attr_reader :gem_store
 
+  # Create a newGemStore server
+  def self.gem_store(&block)
+    new(&block)
+  end
+
   def initialize(&block)
     @fixture_setup = block
   end

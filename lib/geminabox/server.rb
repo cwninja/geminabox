@@ -2,6 +2,12 @@ require 'sinatra'
 require 'geminabox/gem_store'
 
 class Geminabox::Server < Sinatra::Base
+  LEGACY_PATHS = [
+    "/latest_specs.4.8.gz",
+    "/specs.4.8.gz",
+    "/prerelease_specs.4.8.gz",
+  ]
+
   attr_reader :gem_store
   def initialize(gem_store)
     super()
@@ -34,6 +40,12 @@ class Geminabox::Server < Sinatra::Base
     io = gem_store.get(params[:file])
     content_type "application/octet-stream"
     io
+  end
+
+  LEGACY_PATHS.each do |path|
+    get path do
+      [501, {'Content-Type' => 'text/plain'}, ["Not implemented.\nGeminabox only supports installing gems."]]
+    end
   end
 
   post '/gems' do

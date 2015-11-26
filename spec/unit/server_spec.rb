@@ -66,6 +66,16 @@ RSpec.describe Geminabox::Server do
     end
   end
 
+  Geminabox::Server::LEGACY_PATHS.each do |path|
+    describe "get #{path}" do
+      it "returns a 501 response" do
+        get path
+        expect(last_response.status).to eq 501
+        expect(last_response.content_type).to eq "text/plain"
+      end
+    end
+  end
+
   describe "POST /gems" do
     it "adds the gem to the repository when posted as a application/octet-stream" do
       input_file = StringIO.new("hello")

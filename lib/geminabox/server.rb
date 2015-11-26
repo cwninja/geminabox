@@ -23,6 +23,13 @@ class Geminabox::Server < Sinatra::Base
     end
   end
 
+  get "/quick/Marshal.4.8/:name.gemspec.rz" do
+    spec = gem_store.get_spec(params[:name])
+    io = Zlib::Deflate.deflate(Marshal.dump(spec))
+    content_type "application/octet-stream"
+    io
+  end
+
   get '/gems/:file.gem' do
     io = gem_store.get(params[:file])
     content_type "application/octet-stream"

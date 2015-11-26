@@ -3,6 +3,7 @@ require "rubygems/package"
 require "geminabox/filename_generator"
 require "geminabox/gem_file_store"
 require "geminabox/gem_metadata_store"
+require "geminabox/spec_extractor"
 require "sequel"
 
 # A GemStore should return a path on the local file system where the referenced
@@ -10,6 +11,10 @@ require "sequel"
 class Geminabox::GemStore
   def get(*args)
     @file_store.get(*args)
+  end
+
+  def get_spec(*args)
+    Geminabox::SpecExtractor.call(get(*args))
   end
 
   def has_gem?(*args)

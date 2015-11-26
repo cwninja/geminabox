@@ -1,7 +1,7 @@
 class TestProject
   Error = Class.new(RuntimeError)
   def initialize(&block)
-    @setup_proc = block
+    @setup_proc = block || Proc.new{}
   end
 
   def run
@@ -46,6 +46,24 @@ class TestProject
 
   def has_gem?(name, version)
     bundle_status.has?(name, version)
+  end
+
+  def with_local_gemhome
+    env = ENV.clone
+    ENV["GEM_HOME"] = @dir.join("gems").to_s
+    ENV["GEM_PATH"] = @dir.join("gems").to_s
+    yield
+    ENV.replace(env)
+  end
+
+  def gem_install(name, server)
+    Bundler.with_clean_env do
+      with_local_gemhome do
+        command = ["gem", "install", name, '-s', server]
+        output = IO.popen(command, err: [:child, :out]){|io| io.read }
+        raise output unless $? == 0
+      end
+    end
   end
 
 protected

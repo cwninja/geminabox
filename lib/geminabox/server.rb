@@ -19,24 +19,16 @@ class Geminabox::Server < Sinatra::Base
   end
 
   get '/api/v1/dependencies' do
-    if gems = params["gems"]
-      gems = params["gems"].split(",")
-      indexed_gems = gem_store.find_gem_versions(gems)
+    if gems = indexed_gems
       content_type "application/octet-stream"
-      Marshal.dump(indexed_gems.map(&:to_hash))
-    else
-      ''
+      Marshal.dump(gems.map(&:to_hash))
     end
   end
 
   get '/api/v1/dependencies.json' do
-    if gems = params["gems"]
-      gems = params["gems"].split(",")
-      indexed_gems = gem_store.find_gem_versions(gems)
+    if gems = indexed_gems
       content_type "application/json"
-      JSON.dump(indexed_gems.map(&:to_hash))
-    else
-      ''
+      JSON.dump(gems.map(&:to_hash))
     end
   end
 
@@ -67,4 +59,13 @@ class Geminabox::Server < Sinatra::Base
     end
     201
   end
+
+protected
+  def indexed_gems
+    if gems = params["gems"]
+      gems = params["gems"].split(",")
+      gem_store.find_gem_versions(gems)
+    end
+  end
+
 end

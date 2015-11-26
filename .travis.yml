@@ -11,7 +11,7 @@ rvm:
 
 
 env:
-  - gemver: 2.2
+#  - gemver: 2.2 # Unsupported as it requires legacy indexes.
   - gemver: 2.3
   - gemver: 2.4
   - gemver: 

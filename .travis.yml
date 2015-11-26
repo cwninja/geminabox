@@ -11,8 +11,9 @@ rvm:
 
 
 env:
-  - gemver: 2.4
+  - gemver: 2.2
   - gemver: 2.3
+  - gemver: 2.4
   - gemver: 
 
 script: bundle exec rspec spec

@@ -8,12 +8,15 @@ rvm:
  - "2.0.0"
  - "2.1.7"
  - "2.2.3"
+ - "jruby"
+ - "rbx"
 
 
 env:
 #  - gemver: 2.2 # Unsupported as it requires legacy indexes.
   - gemver: 2.3
-  - gemver: 2.4
+  - gemver: 2.4.8
+  - gemver: 2.5.0
   - gemver: 
 
 script: bundle exec rspec spec

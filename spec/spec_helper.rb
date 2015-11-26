@@ -1,9 +1,15 @@
 require 'simplecov'
 SimpleCov.start
 
+require 'bundler'
+
 $:.unshift File.expand_path('../lib', __FILE__)
 require "geminabox"
 
+Bundler.with_clean_env do
+  version = IO.popen(['gem', '--version'], &:read).chomp
+  puts "RubyGems version: #{version}"
+end
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|

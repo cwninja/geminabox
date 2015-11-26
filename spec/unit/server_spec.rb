@@ -56,6 +56,16 @@ RSpec.describe Geminabox::Server do
     end
   end
 
+  describe "GET /quick/Marshal.4.8/:name.gemspec.rz" do
+    it "returns a compressed version of the spec" do
+      expect(gem_store).to receive(:get_spec).with("foo-1.2.3").and_return("foo spec")
+      get "/quick/Marshal.4.8/foo-1.2.3.gemspec.rz"
+
+      result = Marshal.load(Zlib::Inflate.inflate(last_response.body))
+      expect(result).to eq "foo spec"
+    end
+  end
+
   describe "POST /gems" do
     it "adds the gem to the repository when posted as a application/octet-stream" do
       input_file = StringIO.new("hello")

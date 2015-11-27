@@ -7,6 +7,10 @@ module TestServer
     GemStoreServer.new(&block)
   end
 
+  def self.gem_proxy(backend)
+    GemProxyServer.new(backend)
+  end
+
   class Generic
     def run
       start_server!
@@ -53,6 +57,7 @@ module TestServer
     def wait_until_booted!
       start_time = Time.now
       loop do
+        @thread.join unless @thread.alive?
         return if booted?
         raise TimeoutError.new if (Time.now - start_time) > 2
         sleep(0.05)
@@ -86,6 +91,34 @@ module TestServer
     def setup_gems!
       gemset_factory = GemsetFactory.new(gem_store)
       @fixture_setup.call(gemset_factory)
+    end
+
+    def cleanup!
+      super
+      FileUtils.remove_entry @dir
+    end
+  end
+
+  class GemProxyServer < Generic
+    attr_reader :proxy_url
+
+    def initialize(proxy_url)
+      @proxy_url = proxy_url
+    end
+
+    def run(&block)
+      create_gemstore!
+      super(&block)
+    end
+
+  protected
+    def app
+      Geminabox::gem_proxy(@proxy_url, @gem_store)
+    end
+
+    def create_gemstore!
+      @dir = Pathname.new(Dir.mktmpdir)
+      @gem_store = Geminabox::GemStore(@dir)
     end
 
     def cleanup!

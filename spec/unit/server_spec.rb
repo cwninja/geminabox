@@ -8,7 +8,7 @@ RSpec.describe Geminabox::Server do
   }
 
   let(:app) {
-    Geminabox.app(gem_store)
+    Geminabox.gem_store(gem_store)
   }
 
   describe "GET /gems/:file.gem" do

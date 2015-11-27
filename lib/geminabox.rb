@@ -2,7 +2,7 @@ module Geminabox
   GemNotFound = Class.new(RuntimeError)
   BadGemfile = Class.new(RuntimeError)
 
-  def self.app(data_path)
+  def self.gem_store(data_path)
     Geminabox::Server.new(data_path)
   end
 end

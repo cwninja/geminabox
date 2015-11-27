@@ -75,7 +75,7 @@ module TestServer
 
   protected
     def app
-      Geminabox::app(@dir)
+      Geminabox::gem_store(@dir)
     end
 
     def create_gemstore!

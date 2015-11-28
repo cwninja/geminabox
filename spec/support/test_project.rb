@@ -10,10 +10,20 @@ class TestProject
     cleanup!
   end
 
+  def bundle_deployment!
+    run_bundler_command 'install', '--deployment'
+  end
+
   def bundle!
+    run_bundler_command 'install'
+  end
+
+  def run_bundler_command(*args)
+    args.unshift 'bundler'
+    args += ['--path', 'vendor']
     Bundler.with_clean_env do
       Dir.chdir @dir do
-        output = IO.popen(bundler_command, err: [:child, :out]){|io|
+        output = IO.popen(args, err: [:child, :out]){|io|
           io.read
         }
         raise Error.new(output) unless $?.exitstatus.zero?
@@ -76,9 +86,5 @@ protected
 
   def cleanup!
     FileUtils.remove_entry @dir
-  end
-
-  def bundler_command
-    ['bundle', 'install', '--path', 'vendor']
   end
 end

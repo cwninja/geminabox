@@ -20,7 +20,7 @@ module TestServer
     end
 
     def cleanup!
-      Thread.kill(@thread)
+      Thread.kill(@thread) if @thread.alive?
     end
 
     def url
@@ -78,6 +78,11 @@ module TestServer
       super(&block)
     end
 
+    def cleanup!
+      super
+      FileUtils.remove_entry @dir if @dir.exist?
+    end
+
   protected
     def app
       Geminabox::gem_store(@dir)
@@ -91,11 +96,6 @@ module TestServer
     def setup_gems!
       gemset_factory = GemsetFactory.new(gem_store)
       @fixture_setup.call(gemset_factory)
-    end
-
-    def cleanup!
-      super
-      FileUtils.remove_entry @dir
     end
   end
 
@@ -111,6 +111,11 @@ module TestServer
       super(&block)
     end
 
+    def cleanup!
+      super
+      FileUtils.remove_entry @dir if @dir.exist?
+    end
+
   protected
     def app
       Geminabox::gem_proxy(@proxy_url, @gem_store)
@@ -119,11 +124,6 @@ module TestServer
     def create_gemstore!
       @dir = Pathname.new(Dir.mktmpdir)
       @gem_store = Geminabox::GemStore(@dir)
-    end
-
-    def cleanup!
-      super
-      FileUtils.remove_entry @dir
     end
   end
 

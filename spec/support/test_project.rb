@@ -69,7 +69,7 @@ class TestProject
   def gem_install(name, server)
     Bundler.with_clean_env do
       with_local_gemhome do
-        command = ["gem", "install", name, '--source', server]
+        command = ["gem", "install", name, '--clear-sources', '--source', server]
         output = IO.popen(command, err: [:child, :out]){|io| io.read }
         raise output unless $? == 0
       end

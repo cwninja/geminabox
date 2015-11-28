@@ -90,7 +90,7 @@ RSpec.describe Geminabox::Server do
     end
   end
 
-  Geminabox::Server::LEGACY_PATHS.each do |path|
+  Geminabox::LEGACY_PATHS.each do |path|
     describe "get #{path}" do
       it "returns a 501 response" do
         get path

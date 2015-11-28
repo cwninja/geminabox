@@ -9,6 +9,12 @@ module Geminabox
   def self.gem_proxy(proxy_host, data_path)
     Geminabox::Proxy.new(proxy_host, data_path)
   end
+
+  LEGACY_PATHS = [
+    "/latest_specs.4.8.gz",
+    "/specs.4.8.gz",
+    "/prerelease_specs.4.8.gz",
+  ]
 end
 
 require "geminabox/server"

@@ -70,6 +70,12 @@ class Geminabox::Proxy < Sinatra::Base
   end
 
   error Faraday::ConnectionFailed do
-    [503, "Connection failed"]
+    [503, "Connection failed, and nothing cached"]
+  end
+
+  Geminabox::LEGACY_PATHS.each do |path|
+    get path do
+      [501, {'Content-Type' => 'text/plain'}, ["Not implemented.\nGeminabox only supports installing gems."]]
+    end
   end
 end
